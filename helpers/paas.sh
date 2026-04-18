@@ -16,5 +16,5 @@ ps_cp() {
 
 ps_push_dotfiles() {
   ssh "$PAAS_SERVER" "mkdir -p ~/dotfiles"
-  scp -r ./dotfiles/. "${PAAS_SERVER}:~/dotfiles"
+  scp -r ./dotfiles-vps/. "${PAAS_SERVER}:~/dotfiles"
 }
