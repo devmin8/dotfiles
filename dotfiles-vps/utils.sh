@@ -1,4 +1,18 @@
 alias cls="clear"
+alias dl="rm -rf"
+
+# git related
+alias gc="git checkout"
+alias gcb="git checkout -b"
+alias gcm="git commit -m"
+alias gss="git stash save"
+alias gp="git push"
+alias gpf="git push --force-with-lease"
+alias ga="git add ."
+alias gl="git log"
+
+# tools
+alias b="bun"
 
 # util functions
 setup_machine() {
