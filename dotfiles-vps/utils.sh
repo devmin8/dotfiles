@@ -14,12 +14,30 @@ alias gl="git log"
 # tools
 alias b="bun"
 
+alias d="docker"
+alias dp="docker system prune -a --volumes"
+
 # util functions
+dc() {
+  docker rm -f $(docker ps -aq)
+}
+
 setup_machine() {
   local script="$HOME/dotfiles/scripts/setup_machine.sh"
 
   if [[ ! -f "$script" ]]; then
     echo "setup_machine.sh not found at $script"
+    return 1
+  fi
+
+  bash "$script"
+}
+
+run_containers() {
+  local script="$HOME/dotfiles/scripts/run_containers.sh"
+
+  if [[ ! -f "$script" ]]; then
+    echo "run_containers.sh not found at $script"
     return 1
   fi
 

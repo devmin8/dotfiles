@@ -18,3 +18,23 @@ ps_push_dotfiles() {
   ssh "$PAAS_SERVER" "mkdir -p ~/dotfiles"
   scp -r ./dotfiles-vps/. "${PAAS_SERVER}:~/dotfiles"
 }
+
+rivet_build() {
+  echo "Building images (amd64)..."
+  docker buildx build --platform linux/amd64 --build-arg TARGET=hub -t rivet-hub:latest . --load
+  docker buildx build --platform linux/amd64 --build-arg TARGET=sampleapi -t rivet-sampleapi:latest . --load
+
+  echo "Pulling Caddy..."
+  docker pull caddy:2-alpine
+
+  echo "Saving images..."
+  docker save rivet-hub:latest rivet-sampleapi:latest caddy:2-alpine | gzip > rivet-images.tar.gz
+
+  echo "Uploading to server..."
+  ssh $PAAS_SERVER "mkdir -p ~/rivet"
+  scp rivet-images.tar.gz Caddyfile "$PAAS_SERVER:~/rivet/"
+
+  rm -rf rivet-images.tar.gz
+
+  echo "Done 🚀"
+}
