@@ -78,5 +78,3 @@ fi
 
 echo "\n✅ Setup complete"
 echo "🔄 Refresh the shell"
-
-echo "👉 Install the l8bin from - curl -fsSL https://l8b.in | bash"
