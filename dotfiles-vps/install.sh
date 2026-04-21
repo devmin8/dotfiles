@@ -36,7 +36,7 @@ rm -rf ~/.zshrc
 ln -sf ~/dotfiles/.zshrc ~/.zshrc
 echo "✓ dotfiles linked"
 
-echo "\n✅ Environment setup done."
+echo "✅ Environment setup done."
 echo "🔄 Refresh the shell"
 
 echo "👉 Run the 'setup_machine' command to install necessary tools\n"

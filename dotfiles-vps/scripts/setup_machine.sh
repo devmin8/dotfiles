@@ -76,5 +76,5 @@ else
   echo "✓ rsync already installed"
 fi
 
-echo "\n✅ Setup complete"
+echo "✅ Setup complete"
 echo "🔄 Refresh the shell"
