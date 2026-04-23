@@ -15,11 +15,19 @@ alias gl="git log"
 alias b="bun"
 
 alias d="docker"
-alias dp="docker system prune -a --volumes"
+alias dc="docker_clean"
 
 # util functions
-dc() {
+docker_clean() {
   docker rm -f $(docker ps -aq)
+  docker system prune -a --volumes -f
+}
+
+clean() {
+  docker_clean
+  rm -f "$BASE_DIR/rivet-images.tar.gz"
+  rm -f "$BASE_DIR/Caddyfile"
+  rm -rf "$HOME/.config/rivet"
 }
 
 setup_machine() {
@@ -38,6 +46,17 @@ run_containers() {
 
   if [[ ! -f "$script" ]]; then
     echo "run_containers.sh not found at $script"
+    return 1
+  fi
+
+  bash "$script"
+}
+
+rerun_hub() {
+  local script="$HOME/dotfiles/scripts/rerun_hub.sh"
+
+  if [[ ! -f "$script" ]]; then
+    echo "rerun_hub.sh not found at $script"
     return 1
   fi
 

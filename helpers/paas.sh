@@ -19,21 +19,51 @@ ps_push_dotfiles() {
   scp -r ./dotfiles-vps/. "${PAAS_SERVER}:~/dotfiles"
 }
 
-rivet_build() {
-  echo "Building images (amd64)..."
-  docker buildx build --platform linux/amd64 --build-arg TARGET=hub -t rivet-hub:latest . --load
+rivet_cli_build() {
+  echo "👉 Building Go CLI (macOS Apple Silicon)..."
+  GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 \
+    go build -o rivet ./cmd/cli/main.go
 
-  echo "Pulling Caddy..."
+  mv rivet ~/Binaries/
+
+  echo "✅ Built and moved to ~/Binaries"
+}
+
+rivet_build() {
+  echo "👉 Building Go CLI (linux/amd64)..."
+  GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
+    go build -o rivet-linux-amd64 ./cmd/cli/main.go
+
+  rivet_cli_build
+
+  echo "👉 Building images (amd64)..."
+  docker buildx build --platform linux/amd64 \
+    --build-arg TARGET=hub \
+    -t rivet-hub:latest . --load
+
+  echo "👉 Pulling Caddy..."
   docker pull caddy:2-alpine
 
-  echo "Saving images..."
+  echo "👉 Saving images..."
   docker save rivet-hub:latest caddy:2-alpine | gzip > rivet-images.tar.gz
 
-  echo "Uploading to server..."
+  echo "👉 Uploading to server..."
   ssh $PAAS_SERVER "mkdir -p ~/rivet"
-  scp rivet-images.tar.gz Caddyfile "$PAAS_SERVER:~/rivet/"
+  scp rivet-images.tar.gz Caddyfile rivet-linux-amd64 "$PAAS_SERVER:~/rivet/"
 
   rm -rf rivet-images.tar.gz
 
   echo "Done 🚀"
+}
+
+signup() {
+  rivet signup --email shan@mail.com --username shan
+}
+
+login() {
+  rivet login --username shan
+}
+
+push() {
+  rivet push --tag static
 }
