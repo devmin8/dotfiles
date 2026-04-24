@@ -34,8 +34,6 @@ rivet_build() {
   GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
     go build -o rivet-linux-amd64 ./cmd/cli/main.go
 
-  rivet_cli_build
-
   echo "👉 Building images (amd64)..."
   docker buildx build --platform linux/amd64 \
     --build-arg TARGET=hub \
@@ -56,6 +54,17 @@ rivet_build() {
   echo "Done 🚀"
 }
 
+rivet_run() {
+  HUB_HOST=http://hub.localhost \
+  docker compose up --build
+}
+
+clean_docker_images() {
+  docker rm -f $(docker ps -aq)
+  docker system prune -a --volumes -f
+}
+
+# cli commands
 signup() {
   rivet signup --email shan@mail.com --username shan
 }
@@ -66,4 +75,8 @@ login() {
 
 push() {
   rivet push --tag static
+}
+
+ship() {
+  rivet ship
 }
