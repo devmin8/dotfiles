@@ -19,7 +19,7 @@ ps_push_dotfiles() {
   scp -r ./dotfiles-vps/. "${PAAS_SERVER}:~/dotfiles"
 }
 
-rivet_cli_build() {
+rivet_cli_mac_build() {
   echo "👉 Building Go CLI (macOS Apple Silicon)..."
   GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 \
     go build -o rivet ./cmd/cli/main.go
@@ -33,6 +33,8 @@ rivet_build() {
   echo "👉 Building Go CLI (linux/amd64)..."
   GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
     go build -o rivet-linux-amd64 ./cmd/cli/main.go
+
+  rivet_cli_mac_build
 
   echo "👉 Building images (amd64)..."
   docker buildx build --platform linux/amd64 \

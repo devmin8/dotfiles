@@ -10,7 +10,7 @@ CADDY_ADMIN_URL="http://caddy:2019"
 BASE_DIR="$HOME/rivet"
 DATA_DIR="$BASE_DIR/data"
 
-NETWORK_NAME=rivet_runtime
+RIVET_RUNTIME_NETWORK=rivet_runtime
 
 echo "Ensuring base directory..."
 mkdir -p "$BASE_DIR" "$DATA_DIR"
@@ -19,7 +19,7 @@ echo "Loading new hub image..."
 gunzip -c "$BASE_DIR/rivet-images.tar.gz" | docker load
 
 echo "Creating network if not exists..."
-docker network inspect $NETWORK_NAME >/dev/null 2>&1 || docker network create $NETWORK_NAME
+docker network inspect $RIVET_RUNTIME_NETWORK >/dev/null 2>&1 || docker network create $RIVET_RUNTIME_NETWORK
 
 echo "Stopping old hub container if it exists..."
 docker rm -f hub >/dev/null 2>&1 || true
@@ -30,11 +30,13 @@ docker image prune -f
 echo "Starting new hub container..."
 docker run -d \
   --name hub \
-  --network $NETWORK_NAME \
+  --network $RIVET_RUNTIME_NETWORK \
   --user 0:0 \
+  -e HUB_HOST="${HUB_HOST}" \
   -e HUB_SERVER_PORT="${HUB_SERVER_PORT}" \
-  -e CADDY_ADMIN_URL="${CADDY_ADMIN_URL}" \
   -e HUB_DB_PATH="${HUB_DB_PATH}" \
+  -e CADDY_ADMIN_URL="${CADDY_ADMIN_URL}" \
+  -e RIVET_RUNTIME_NETWORK="${RIVET_RUNTIME_NETWORK}" \
   -v "$DATA_DIR:/var/lib/rivet" \
   -v "/var/run/docker.sock:/var/run/docker.sock" \
   --restart unless-stopped \
